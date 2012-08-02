@@ -10,7 +10,9 @@ function Update () {
   for(var i=0;i<jenkins_data["jobs"].length;i++) {
     if (jenkins_data["jobs"][i]["color"] == "blue_anime" || jenkins_data["jobs"][i]["color"] == "red_anime" || jenkins_data["jobs"][i]["color"] == "aborted_anime") {
       cube = GameObject.Find(jenkins_data["jobs"][i]["name"]);
-      cube.transform.Rotate(60*Time.deltaTime, 0, 0);
+      if (cube) {
+        cube.transform.Rotate(60*Time.deltaTime, 0, 0);
+      }
     }
   }
 
@@ -43,9 +45,18 @@ function handle_jenkins_data() {
     }
     cube.name = jenkins_data["jobs"][i]["name"];
     cube.transform.localScale = Vector3(7,1,1);
-    //var go : GameObject = new GameObject("MyText");
-    //var tm : GUIText = go.AddComponent("GUIText");
-    //tm.text = jenkins_data["jobs"][i]["name"];
+    go = GameObject.Find(jenkins_data["jobs"][i]["name"] + "_text");
+    if (!go) {
+      go = new GameObject("MyText");
+      go.name = jenkins_data["jobs"][i]["name"] + "_text";
+    }
+    var tm : TextMesh = go.AddComponent("TextMesh");
+    tm.text = jenkins_data["jobs"][i]["name"];
+    tm.font = GameObject.Find("New Text").GetComponent("TextMesh").font;
+    tm.fontSize = 300;
+    go.transform.localScale = Vector3(.01,.01,.01);
+    go.AddComponent("MeshRenderer");
+    go.renderer.material = GameObject.Find("New Text").renderer.material;
     if (jenkins_data["jobs"][i]["color"] == "blue" || jenkins_data["jobs"][i]["color"] == "blue_anime") {
       cube.renderer.material = GameObject.Find("GreenCube").renderer.material;
     } else {
@@ -53,13 +64,13 @@ function handle_jenkins_data() {
     }
     if (current_x_value < 14) {
       cube.transform.position = Vector3(current_x_value, current_y_value, 0);
-      //tm.transform.position = Vector3(current_x_value - 2.5,current_y_value, 10);
+      tm.transform.position = Vector3(current_x_value - 2.5,current_y_value, 0);
       current_x_value = current_x_value + x_spacing_between_cubes;
     } else {
       current_x_value = default_x_value;
       current_y_value = current_y_value + y_spacing_between_cubes;
       cube.transform.position = Vector3(current_x_value, current_y_value, 0);
-      //tm.transform.position = Vector3(current_x_value - 2.5,current_y_value, 0);
+      tm.transform.position = Vector3(current_x_value - 2.5,current_y_value, 0);
       current_x_value = current_x_value + x_spacing_between_cubes;
     }
   }
